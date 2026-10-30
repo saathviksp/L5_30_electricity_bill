@@ -1,0 +1,31 @@
+************* Module electricity_bill
+electricity_bill.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+electricity_bill.py:17:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:17:0: C0103: Function name "readMeters" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:17:15: C0103: Argument name "xmlText" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:22:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:22:0: C0103: Function name "calculateUnits" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:29:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:29:0: C0103: Function name "energyCharge" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:34:8: C0103: Variable name "slabUnits" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:42:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:42:0: C0103: Function name "generateBill" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:42:17: C0103: Argument name "meterId" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:42:33: C0103: Argument name "taxRate" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:42:0: W0102: Dangerous default value {} as argument (dangerous-default-value)
+electricity_bill.py:50:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:50:0: C0103: Function name "averageBill" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:50:16: W0613: Unused argument 'currency' (unused-argument)
+electricity_bill.py:56:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:56:0: C0103: Function name "saveBills" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:56:14: C0103: Argument name "fileName" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:57:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+electricity_bill.py:61:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:61:0: C0103: Function name "syncMeter" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:61:14: C0103: Argument name "meterIp" doesn't conform to snake_case naming style (invalid-name)
+electricity_bill.py:66:0: C0116: Missing function or method docstring (missing-function-docstring)
+electricity_bill.py:67:8: C0103: Variable name "meterId" doesn't conform to snake_case naming style (invalid-name)
+
+-----------------------------------
+Your code has been rated at 5.44/10
+
