@@ -1,3 +1,5 @@
+"""Module for electricity bill calculation from meter readings."""
+
 import json
 import os
 import urllib.error
@@ -16,54 +18,62 @@ CLERK_PASSWORD = os.getenv("CLERK_PASSWORD", "bill-desk-demo")
 bills = []
 
 
-def readMeters(xmlText):
-    root = ET.fromstring(xmlText)
+def read_meters(xml_text):
+    """Parse meter XML text and return meter readings list."""
+    root = ET.fromstring(xml_text)
     return [(m.get("id"), int(m.get("prev")), int(m.get("curr")))
             for m in root.findall("meter")]
 
-def calculateUnits(previous, current):
+def calculate_units(previous, current):
+    """Calculate consumed units, warning if meter reading reversed."""
     if current < previous:
         print("Warning: meter reading went backwards")
         return 0
     return current - previous
 
 
-def energyCharge(units):
+def energy_charge(units):
+    """Compute progressive energy charge based on tiered slab rates."""
     charge = 0
     lower = 0
     remaining = units
     for limit, rate in SLABS:
-        slabUnits = min(remaining, limit - lower)
-        if slabUnits > 0:
-            charge += slabUnits * rate
-            remaining -= slabUnits
+        slab_units = min(remaining, limit - lower)
+        if slab_units > 0:
+            charge += slab_units * rate
+            remaining -= slab_units
         lower = limit
     return charge + remaining * HIGH_RATE
 
 
-def generateBill(meterId, units, taxRate=0.05, extras={}):
-    amount = energyCharge(units) + FIXED_CHARGE + sum(extras.values())
-    bill = {"meter" : meterId, "units": units,
-            "amount": round(amount * (1 + taxRate), 2)}
+def generate_bill(meter_id, units, tax_rate=0.05, extras=None):
+    """Generate and record a bill with base charge, extras, and tax."""
+    if extras is None:
+        extras = {}
+    amount = energy_charge(units) + FIXED_CHARGE + sum(extras.values())
+    bill = {"meter" : meter_id, "units": units,
+            "amount": round(amount * (1 + tax_rate), 2)}
     bills.append(bill)
     return bill
 
 
-def averageBill(currency):
+def average_bill(_currency="INR"):
+    """Calculate the average amount across all generated bills."""
     if not bills:
         return 0
     return round(sum(bill["amount"] for bill in bills) / len(bills), 2)
 
 
-def saveBills(fileName="bills.json"):
-    with open(fileName, "w") as f:
+def save_bills(file_name="bills.json"):
+    """Persist all recorded bills to a JSON file."""
+    with open(file_name, "w", encoding="utf-8") as f:
         json.dump(bills, f, indent=2)
 
 
-def syncMeter(meterIp):
+def sync_meter(meter_ip):
+    """Safely fetch reading from meter device via HTTP GET."""
     # Helper kept for the lab: not called by the demo
-    # Replaced os.system shell invocation with safe urllib request
-    url = f"http://{meterIp}/reading"
+    url = f"http://{meter_ip}/reading"
     try:
         with urllib.request.urlopen(url, timeout=5) as response:  # nosec B310
             return response.read()
@@ -72,18 +82,19 @@ def syncMeter(meterIp):
 
 
 def main():
-    for meterId, previous, current in readMeters(METER_XML):
-        units = calculateUnits(previous, current)
-        generateBill(meterId, units)
-    generateBill("M4", 50, extras={"late_fee": 25})
+    """Main execution flow for reading meters, billing, and saving."""
+    for meter_id, previous, current in read_meters(METER_XML):
+        units = calculate_units(previous, current)
+        generate_bill(meter_id, units)
+    generate_bill("M4", 50, extras={"late_fee": 25})
     for bill in bills:
         print(bill["meter"], "used", bill["units"], "units, bill Rs.", bill["amount"])
     highest = max(bills, key=lambda bill: bill["amount"])
     print("Highest bill:", highest["meter"])
-    print("Average bill:", averageBill("INR"))
+    print("Average bill:", average_bill("INR"))
     total=sum(bill["amount"] for bill in bills)
     print("Total billed:", round(total, 2))
-    saveBills()
+    save_bills()
     print("Saved", len(bills), "bills to bills.json")
 
 
